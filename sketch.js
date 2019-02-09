@@ -1,46 +1,67 @@
-// https://www.youtube.com/watch?v=AaGK-fj-BAM
+// https://www.youtube.com/watch?v=0j86zuqqTlQ
 
-var s;
-var scl = 20;
+let x;
+let y;
+let xspeed;
+let yspeed;
+let dvdWidth = 80;
+let dvdHeight = 60;
+let dvd;
+let r, g, b;
 
-var food;
-
-function setup() {
-  createCanvas(600, 600)
-  s = new Snake();
-  frameRate(10);
-  pickLocation();
+function preload() {
+  dvd = loadImage("dvd_logo.png");
 }
 
-function pickLocation() {
-  var cols = floor(width/scl);
-  var rows = floor(height/scl);
-  food = createVector(floor(random(cols)), floor(random(rows)));
-  food.mult(scl);
+function pickColor() {
+  r = random(100, 256);
+  g = random(100, 256);
+  b = random(100, 256);
+}
+
+function setup() {
+  createCanvas(800, 500);
+  x = random(width);
+  y = random(height);
+  frameRate(10000);
+  xspeed = 10;
+  yspeed = 10;
 }
 
 function draw() {
-  background(51)
-  s.update();
-  s.show();
+  background(0);
+  tint(r, g, b);
+  image(dvd, x, y);
 
-  if (s.eat(food)) {
-    pickLocation();
+  x += xspeed;
+  y += yspeed;
+
+  if ((x <= 0 && y <= 0) || 
+      (x >= width - dvd.width && y >= height - dvd.height) || 
+      (x >= width - dvd.width && y <= 0) || 
+      (x <= 0 && y >= height - dvd.height)) {
+    console.log("CORNER!");
   }
 
-  fill(244, 0, 100);
-  rect(food.x, food.y, scl, scl);
-}
+  // hits right side or left side
+  if (x >= width - dvd.width) {
+    xspeed = -xspeed;
+    x = width - dvd.width;
+    pickColor();
+  } else if (x < 0) {
+    xspeed = -xspeed;
+    x = 0;
+    pickColor();
+  }
 
-function keyPressed() {
-  if (keyCode === UP_ARROW) {
-    s.dir(0, -1)
-  } else if (keyCode === DOWN_ARROW) {
-    s.dir(0, 1);
-  } else if (keyCode === RIGHT_ARROW) {
-    s.dir(1, 0);
-  } else if (keyCode === LEFT_ARROW) {
-    s.dir(-1, 0);
+  // hits bottom or top
+  if (y >= height - dvd.height) {
+    yspeed = -yspeed;
+    y = height - dvd.height;
+    pickColor();
+  } else if (y < 0) {
+    yspeed = -yspeed;
+    y = 0;
+    pickColor();
   }
 }
-
